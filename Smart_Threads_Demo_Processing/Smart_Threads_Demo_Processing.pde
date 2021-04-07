@@ -6,8 +6,7 @@ Serial myPort;
 String val;
 String angle = "0";
 
-// since we're doing serial handshaking, 
-// we need to check if we've heard from the microcontroller
+// Serial handshake initialization
 boolean firstContact = false;
 
 //create ControlP5 object
@@ -19,15 +18,19 @@ PFont fontTitle;
 
 void setup(){
   
-    
-  //printArray(Serial.list()); //Find serial ports avaliable. Arduino currently on [8]
+  // Uncomment to see supported fonts
+  //String[] fontList = PFont.list();
+  //printArray(fontList);  
+  
+  // Uncomment to see avaliable serial ports to find Arduino 
+  //printArray(Serial.list());
   
   //Set window size
-  size(800, 500);    
+  size(1000, 700);    
   
   // Initialize serial communications
   //port = new Serial(this, "COM3", 9600);
-  myPort = new Serial(this, Serial.list()[8], 9600);
+  myPort = new Serial(this, Serial.list()[7], 9600);
   myPort.bufferUntil('\n'); 
   
   // Create control object
@@ -36,6 +39,8 @@ void setup(){
   // Define custom fonts
   font = createFont("Calibri", 20);    // custom fonts for buttons and title
   fontTitle = createFont("Calibri", 60);
+  textFont(font);
+  
 
   // Add buttons
   cp5.addButton("Start") 
@@ -104,7 +109,6 @@ void draw(){
 
 // Add functions for buttons
 // Each button sends a serial charecter to the Arduino
-
 void Start(){
   myPort.write('s');
   println("s");  

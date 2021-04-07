@@ -9,6 +9,11 @@ float voltageCurrent;
 float range;
 String angle;
 char val;
+int angleRound;
+int arrSize = 5;
+int loopCount = 0;
+int angleTally = 0;
+
 
 // Setup INA260 Voltage Sensor
 void setup() {
@@ -56,16 +61,37 @@ void loop(){
         // Compute angle from voltage
         range = voltageStart - voltageEnd;
         voltageCurrent = ina260.readBusVoltage();
-        angle = String(((voltageCurrent -voltageEnd)/range)*90);
 
-        // Send angle to Processing GUI
-        Serial.println("Current Angle: " + angle);
-        delay(1000);
+        // Average over 5 angle measurements and round
+        angleRound = round(((voltageCurrent -voltageEnd)/range)*90);
+        angleTally += angleRound;
+        
+        if (loopCount % 5 == 0) {
+          
+          // Limit ROM from 0-90 degrees
+          if(angleTally > 90*5){
+            angleTally = 90*5;
+          }
+          if(angleTally < 0){
+            angleTally = 0;
+          }
+          
+          angleTally = 90*5 - (angleTally);
+          angle = String(angleTally/5);
+
+          // Send angle to Processing GUI
+          Serial.println("Current Angle: " + angle);
+          angleTally = 0;
+          
+        }
+          delay(100);
+        loopCount++;
       }
     }
   }
 }
 
+// Establish serial connection to Processing 
 void establishContact() {
   while (Serial.available() <= 0) {
   Serial.println("A");   // send a capital A
